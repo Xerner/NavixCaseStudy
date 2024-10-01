@@ -6,7 +6,7 @@ public class ManufacturerDTO
 {
     public int Mfr_ID { get; set; }
     public string Country { get; set; } = string.Empty;
-    public string Mfr_CommonName { get; set; } = string.Empty;
+    public string? Mfr_CommonName { get; set; } = null;
     public string Mfr_Name { get; set; } = string.Empty;
     public IEnumerable<VehicleTypeDTO> VehicleTypes { get; set; } = [];
 

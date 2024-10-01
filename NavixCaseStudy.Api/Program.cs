@@ -1,5 +1,7 @@
 using Microsoft.OpenApi.Models;
-using System.Reflection;
+using NavixCaseStudy.Application.Repositories;
+using NavixCaseStudy.CaseStudyApiWrapper.Interfaces;
+using NavixCaseStudy.CaseStudyApiWrapper.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,17 +14,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(swaggerOptions =>
 {
-    swaggerOptions.SwaggerDoc("case.study", new OpenApiInfo
+    swaggerOptions.SwaggerDoc("v1.0", new OpenApiInfo
     {
-        Version = "case.study",
+        Version = "v1.0",
         Title = "Case Study",
         Description = "The Navix Case Study API"
     });
     swaggerOptions.EnableAnnotations();
-    // includes the xml file found after the project builds
-    swaggerOptions.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-    swaggerOptions.SupportNonNullableReferenceTypes();
 });
+
+builder.Services.AddSingleton<IManufacturerService, ManufacturerService>();
+builder.Services.AddSingleton<IManufacturerRepository, ManufacturerRepository>();
 
 var app = builder.Build();
 
@@ -30,7 +32,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(swaggerOptions =>
+    {
+        swaggerOptions.SwaggerEndpoint("/swagger/v1.0/swagger.json", "v1.0");
+    });
 }
 
 app.UseAuthorization();

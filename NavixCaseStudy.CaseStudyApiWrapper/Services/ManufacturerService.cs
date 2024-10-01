@@ -1,18 +1,16 @@
-﻿using NavixCaseStudy.Application.Repositories;
-using NavixCaseStudy.CaseStudyApiWrapper.DTOs;
+﻿using NavixCaseStudy.CaseStudyApiWrapper.DTOs;
+using NavixCaseStudy.CaseStudyApiWrapper.Interfaces;
 using NavixCaseStudy.Common.DTOs;
-using NavixCaseStudy.Common.Models;
-using System.Xml;
 
 namespace NavixCaseStudy.CaseStudyApiWrapper.Services;
 
-public class ManufacturerService(ManufacturerRepository manufacturerRepository)
+public class ManufacturerService(IManufacturerRepository manufacturerRepository) : IManufacturerService
 {
     /// <summary>
     /// Assumed grouping by the manufacturer's primary vehicle type, also assuming the manufacturer only has one primary vehicle type.
     /// </summary>
     /// <returns>Manufacturers grouped by their primary vehicle type</returns>
-    public async Task<Dictionary<string, List<ManufacturerDTO>>?> GetByVehicleTypeAsync(ManufacturerFilterDTO filterDTO)
+    public async Task<Dictionary<string, List<ManufacturerDTO>>?> GetByVehicleTypeAsync(ManufacturerFilterDTO? filterDTO)
     {
         var manufacturerResults = await manufacturerRepository.GetAsync(filterDTO);
         if (manufacturerResults is null || manufacturerResults.Results is null)
@@ -22,6 +20,10 @@ public class ManufacturerService(ManufacturerRepository manufacturerRepository)
         var vehicleTypeNameToManufacturers = new Dictionary<string, List<ManufacturerDTO>>();
         foreach (var manufacturerDTO in manufacturerResults.Results)
         {
+            if (manufacturerDTO is null)
+            {
+                continue;
+            }
             foreach (var vehicleType in manufacturerDTO.VehicleTypes)
             {
                 if (vehicleType is null)

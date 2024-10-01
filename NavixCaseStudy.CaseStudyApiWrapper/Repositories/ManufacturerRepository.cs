@@ -4,21 +4,19 @@ using NavixCaseStudy.CaseStudyApiWrapper.DTOs.Abstract;
 using NavixCaseStudy.CaseStudyApiWrapper.DTOs;
 using NavixCaseStudy.Common.Repositories.Abstract;
 using NavixCaseStudy.Common.DTOs;
+using NavixCaseStudy.CaseStudyApiWrapper.Interfaces;
 
 namespace NavixCaseStudy.Application.Repositories;
 
-public class ManufacturerRepository : HttpRepository
+public class ManufacturerRepository(IHttpClientFactory httpClientFactory) 
+    : HttpRepository("ManufacturerRepository", httpClientFactory), 
+      IManufacturerRepository
 {
-    public ManufacturerRepository(IHttpClientFactory httpClientFactory)
-        : base(
-            "ManufacturerRepository", 
-            httpClientFactory
-            ) { }
 
     /// <summary>
     /// Fetches manufacturers information, including vehicle types, from the case study API
     /// </summary>
-    public async Task<ResultsDTO<ManufacturerDTO, ManufacturerSearchCriteriaDTO>?> GetAsync(ManufacturerFilterDTO? filterDTO = null)
+    public async Task<ResultsDTO<ManufacturerDTO, ManufacturerSearchCriteriaDTO?>?> GetAsync(ManufacturerFilterDTO? filterDTO = null)
     {
         var query = new Dictionary<string, string?>();
         if (filterDTO is not null)
@@ -34,11 +32,11 @@ public class ManufacturerRepository : HttpRepository
         {
             return null;
         }
-        var manufacturers = await request.Content.ReadFromJsonAsync<ResultsDTO<ManufacturerDTO, ManufacturerSearchCriteriaDTO>>();
+        var manufacturers = await request.Content.ReadFromJsonAsync<ResultsDTO<ManufacturerDTO, ManufacturerSearchCriteriaDTO?>>();
         if (manufacturers is null || manufacturers.Results == null)
         {
             return null;
         }
         return manufacturers;
-    } 
+    }
 }
