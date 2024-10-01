@@ -1,0 +1,6 @@
+@NavixCaseStudy_HostAddress = http://localhost:5196
+
+GET {{NavixCaseStudy_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
