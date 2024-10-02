@@ -1,6 +1,7 @@
 ﻿using NavixCaseStudy.CaseStudyApiWrapper.DTOs;
 using NavixCaseStudy.CaseStudyApiWrapper.Interfaces;
 using NavixCaseStudy.Common.DTOs;
+using NavixCaseStudy.Common.Models;
 
 namespace NavixCaseStudy.CaseStudyApiWrapper.Services;
 
@@ -10,14 +11,15 @@ public class ManufacturerService(IManufacturerRepository manufacturerRepository)
     /// Assumed grouping by the manufacturer's primary vehicle type, also assuming the manufacturer only has one primary vehicle type.
     /// </summary>
     /// <returns>Manufacturers grouped by their primary vehicle type</returns>
-    public async Task<Dictionary<string, List<ManufacturerDTO>>?> GetByVehicleTypeAsync(ManufacturerFilterDTO? filterDTO)
+    public async Task<IDictionary<string, ISet<Manufacturer>>> GetByVehicleTypeAsync(ManufacturerFilterDTO? filterDTO)
     {
         var manufacturerResults = await manufacturerRepository.GetAsync(filterDTO);
+        var manufacturersByVehicleType = new Dictionary<string, HashSet<Manufacturer>>();
         if (manufacturerResults is null || manufacturerResults.Results is null)
         {
-            return null;
+            return (IDictionary<string, ISet<Manufacturer>>)manufacturersByVehicleType;
         }
-        var vehicleTypeNameToManufacturers = new Dictionary<string, List<ManufacturerDTO>>();
+        // Group manufacturers by their vehicle type
         foreach (var manufacturerDTO in manufacturerResults.Results)
         {
             if (manufacturerDTO is null)
@@ -30,13 +32,13 @@ public class ManufacturerService(IManufacturerRepository manufacturerRepository)
                 {
                     continue;
                 }
-                if (!vehicleTypeNameToManufacturers.ContainsKey(vehicleType.Name))
+                if (!manufacturersByVehicleType.ContainsKey(vehicleType.Name))
                 {
-                    vehicleTypeNameToManufacturers[vehicleType.Name] = [];
+                    manufacturersByVehicleType[vehicleType.Name] = [];
                 }
-                vehicleTypeNameToManufacturers[vehicleType.Name].Add(manufacturerDTO);
+                manufacturersByVehicleType[vehicleType.Name].Add(manufacturerDTO.ToCommonModel());
             }
         }
-        return vehicleTypeNameToManufacturers;
+        return (IDictionary<string, ISet<Manufacturer>>)manufacturersByVehicleType;
     }
 }

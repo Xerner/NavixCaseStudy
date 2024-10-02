@@ -22,9 +22,9 @@ public class ManufacturerRepository(IHttpClientFactory httpClientFactory)
         if (filterDTO is not null)
         {
             // ?Mfr_ID=manufacturerId
-            AddQueryParam(query, nameof(ManufacturerDTO.Mfr_ID), filterDTO.ManufacturerId.ToString());
+            AddQueryParams(query, "ManufacturerID", filterDTO.ManufacturerIDs);
             // ?VehicleType=vehicleTypeName possibly appearing multiple times
-            AddQueryParam(query, "VehicleType", filterDTO.VehicleTypeNames);
+            AddQueryParams(query, "VehicleType", filterDTO.VehicleTypeNames);
         }
         var uri = QueryHelpers.AddQueryString("https://navixrecruitingcasestudy.blob.core.windows.net/manufacturers/vehicle-manufacturers.json", query);
         var request = await _httpClient.GetAsync(uri);
@@ -32,6 +32,7 @@ public class ManufacturerRepository(IHttpClientFactory httpClientFactory)
         {
             return null;
         }
+        // FIXME: this fails to deserialize the JSON response because there exists a manufacturer whos "Country" is equal to "1"
         var manufacturers = await request.Content.ReadFromJsonAsync<ResultsDTO<ManufacturerDTO, ManufacturerSearchCriteriaDTO?>>();
         if (manufacturers is null || manufacturers.Results == null)
         {

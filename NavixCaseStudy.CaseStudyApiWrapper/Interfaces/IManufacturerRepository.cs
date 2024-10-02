@@ -6,5 +6,5 @@ namespace NavixCaseStudy.CaseStudyApiWrapper.Interfaces;
 
 public interface IManufacturerRepository
 {
-    Task<ResultsDTO<ManufacturerDTO, ManufacturerSearchCriteriaDTO>?> GetAsync(ManufacturerFilterDTO? filterDTO = null);
+    Task<ResultsDTO<ManufacturerDTO, ManufacturerSearchCriteriaDTO?>?> GetAsync(ManufacturerFilterDTO? filterDTO = null);
 }

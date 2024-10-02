@@ -1,9 +1,10 @@
 ﻿using NavixCaseStudy.CaseStudyApiWrapper.DTOs;
 using NavixCaseStudy.Common.DTOs;
+using NavixCaseStudy.Common.Models;
 
 namespace NavixCaseStudy.CaseStudyApiWrapper.Interfaces;
 
 public interface IManufacturerService
 {
-    Task<Dictionary<string, List<ManufacturerDTO>>?> GetByVehicleTypeAsync(ManufacturerFilterDTO? filterDTO);
+    Task<IDictionary<string, ISet<Manufacturer>>> GetByVehicleTypeAsync(ManufacturerFilterDTO? filterDTO);
 }

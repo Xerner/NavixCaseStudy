@@ -20,7 +20,7 @@ public class HttpRepository
         }
     }
 
-    public void AddQueryParam(Dictionary<string, string?> queryParams, string key, List<string>? values)
+    public void AddQueryParams(Dictionary<string, string?> queryParams, string key, IEnumerable<string?>? values)
     {
         if (values is not null)
         {
@@ -29,5 +29,10 @@ public class HttpRepository
                 queryParams.Add(key, value);
             }
         }
+    }
+
+    public void AddQueryParams<T>(Dictionary<string, string?> queryParams, string key, IEnumerable<T>? values) where T : notnull
+    {
+        AddQueryParams(queryParams, key, values?.Select(value => value.ToString()));
     }
 }

@@ -2,6 +2,6 @@
 
 public class ManufacturerFilterDTO
 {
-    public int? ManufacturerId { get; set; } = null;
-    public List<string>? VehicleTypeNames { get; set; } = null;
+    public IEnumerable<int>? ManufacturerIDs { get; set; } = null;
+    public IEnumerable<string>? VehicleTypeNames { get; set; } = null;
 }
